@@ -96,3 +96,24 @@ func (h *HashMap) Get(key int) (interface{}, bool) {
 
 	return nil, false
 }
+
+func (h *HashMap) Del(key int) {
+	hash := h.hash(key)
+	list := h.scope[hash]
+
+	for i := range list {
+		if list[i].originalKey == key {
+			newlist := remove(list, i)
+			h.scope[hash] = newlist
+			h.length--
+			if len(list) > 1 {
+				h.collisions--
+			}
+		}
+	}
+}
+
+func remove(slice []Cell, ix int) []Cell {
+	slice[ix] = slice[len(slice)-1]
+	return slice[:len(slice)-1]
+}
